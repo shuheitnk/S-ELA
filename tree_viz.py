@@ -5,14 +5,14 @@ from sklearn.ensemble import RandomForestClassifier
 import dtreeviz
 import matplotlib.pyplot as plt
 
-# Set font type for plotting (for compatibility with PDF/PS output)
+# Set font type for plotting
 plt.rcParams['pdf.fonttype'] = plt.rcParams['ps.fonttype'] = 42
 
 # Load the datasets containing target and feature data
 target_df = pd.read_csv("wilcoxon_best_algo_1.csv")
 features_df = pd.read_csv("s_ela_features.csv")
 
-# Define feature and target column names
+
 feature_columns = features_df.columns[1:]  # Skip the first column (instance identifier)
 target_columns = target_df.columns[1:]  # Skip the first column (instance identifier)
 
@@ -36,7 +36,7 @@ X, Y = np.array(X), np.array(Y)
 Y_classified = np.argmax(Y, axis=1)
 
 # Initialize and train a Random Forest classifier
-random_seed = np.random.randint(1, 100000)  # Generate a random seed for reproducibility
+random_seed = np.random.randint(1, 100000)  # Generate a random seed for testing
 model = RandomForestClassifier(max_depth=3, bootstrap=False, random_state=random_seed)
 model.fit(X, Y_classified)
 
