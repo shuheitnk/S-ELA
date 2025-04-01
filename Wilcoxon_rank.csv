@@ -1,5 +1,3 @@
-# 1 represents the best performance, 0 represents not the best performance. 
-
 instance,sms,nsga,mole
 Bi-Objective BBOB_2_1_1,0,0,1
 Bi-Objective BBOB_2_1_10,0,0,1
