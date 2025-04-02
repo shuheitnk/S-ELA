@@ -1,5 +1,5 @@
 # Function for decomposition-based approach
-DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
+DecoELA = function(X, Y, H = 50, aggregate = TRUE, make_vec = "sld", scalar_func = "weightedsum", set_name = NULL){
 
   if (!requireNamespace("flacco", quietly = TRUE)) {
     stop("The 'flacco' package is required but not installed.")
@@ -7,6 +7,14 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
 
   if (!requireNamespace("MOEADr", quietly = TRUE)) {
     stop("The 'MOEADr' package is required but not installed.")
+  }
+
+  if (scalar_func = "weightedsum"){
+    Scfunc = weightedsum
+  }else if (scalar_func = "tchebycheff"){
+    Scfunc = tchebycheff
+  }else{
+    stop("The scalarization function you have designated has not yet been implemented.")
   }
   
   # Ensure the number of solutions and fitness values match
@@ -18,7 +26,7 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
   } else {
     
     # Weight vector for decomposition
-    weight_vector <- MOEADr::decomposition_sld(list(name = "sld", H = H, .nobj = n.fitness))
+    weight_vector <- MOEADr::decomposition_sld(list(name = make_vec, H = H, .nobj = n.fitness))
     n.weight <- length(weight_vector)
     
     # Initialize result list
@@ -29,7 +37,8 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
       w <- weight_vector[i,]
       
       # Calculate new objective values based on the weight
-      G = weightedsum(Y, w)
+      G <- Scfunc(Y, w)
+      
       
       feat_object <- flacco::createFeatureObject(X = X, y = G)
       
