@@ -33,7 +33,7 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
     
     # Aggregate the results if required
     if (aggregate) {
-      deco <- do_aggregate(sub_features)
+      deco <- doAggregate(sub_features)
     } else {
       deco <- sub_features
     }
