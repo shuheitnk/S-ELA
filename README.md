@@ -2,6 +2,10 @@
 
 This repository contains code and experiments for Automated Algorithm Selection (AAS) and predicting algorithm performance using our proposed Scalarization-based Exploratory Landscape Analysis (S-ELA).
 
+For now, only the "developer" version is available from GitHub. To install it, either clone this repository or run:
+
+`devtools::install_github("shuheitnk/S-ELA")`
+
 # Quick Start of S-ELA
 
 `under preparation.`
