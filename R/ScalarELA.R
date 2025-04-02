@@ -25,10 +25,10 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
         w[i] * Y[i, j]  
       })
       
-      feat_object <- createFeatureObject(X = X, y = Fn)
+      feat_object <- flacco::createFeatureObject(X = X, y = Fn)
       
       # Calculate feature set for each weight
-      sub_features[[i]] <- calculateFeatureSet(feat_object, set = set_name)
+      sub_features[[i]] <- flacco::calculateFeatureSet(feat_object, set = set_name)
     }
     
     # Aggregate the results if required
@@ -57,10 +57,10 @@ DomiELA = function(X, Y, set_name = NULL){
     ranks <- ecr:::doNondominatedSortingR(t(Y))$ranks
     ranks <- as.numeric(ranks)
     
-    feat_object <- createFeatureObject(X = X, y = ranks)
+    feat_object <- flacco::createFeatureObject(X = X, y = ranks)
     
     # Calculate the dominance-based feature set
-    domi <- calculateFeatureSet(feat_object, set = set_name)
+    domi <- flacco::calculateFeatureSet(feat_object, set = set_name)
     
     return(domi)
   }
