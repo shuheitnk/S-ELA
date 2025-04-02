@@ -26,7 +26,7 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
     
     # Loop over each weight to calculate the new objective values
     for (i in 1:n.weight) {
-      w <- weight_vector[i]
+      w <- weight_vector[i,]
       
       # Calculate new objective values based on the weight
       G = weightedsum(Y, w)
