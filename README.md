@@ -1,7 +1,6 @@
 # Scalarization-based Exploratory Landscape Analysis for Multi-Objective Continuous Optimization Problems
 
-This repository contains code and experiments for Automated Algorithm Selection (AAS) and predicting algorithm performance using our proposed Scalarization-based Exploratory Landscape Analysis (S-ELA).
-
+The `ScalarELA` package allows us to implement S-ELA easily.  
 For now, only the developer version is available from GitHub. To install it, either clone this repository or run:
 
 ```r
