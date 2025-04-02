@@ -23,20 +23,20 @@ d <- 2; n.sample <- 100
 # Define the bi-objective function from bbob-biobj
 fn <- smoof::makeBiObjBBOBFunction(d, fid = 1, iid = 1)
 
-# Generate Latin Hypercube Samples (LHS) in [0,1]^d
+# Generate sample solutions via Improved Latin Hypercube Sampling in [0,1]^d
 samples <- lhs::improvedLHS(n.sample, d)
 
-# Get lower and upper bounds of the function
+# Get lower and upper bounds of the decision space
 fn.lower <- smoof::getLowerBoxConstraints(fn)
 fn.upper <- smoof::getUpperBoxConstraints(fn)
 
-# Scale samples to match the function's input domain
+# Scale samples to input the samplued solutions into the function
 X <- sweep(samples, 2, fn.lower, "+") * (fn.upper - fn.lower)
 
-# Evaluate the function at the sampled points
+# Evaluate the function at the sampled solutions
 Y <- t(apply(X, 1, fn))
 
-# Normalize input variables to [0,1] range
+# Normalize variables to [0,1] range
 X_scaled <- (X - fn.lower) / (fn.upper - fn.lower)
 
 # Normalize objective values to [0,1] range
@@ -44,10 +44,10 @@ Y_min <- apply(Y, 2, min)
 Y_max <- apply(Y, 2, max)
 Y_scaled <- (Y - Y_min) / (Y_max - Y_min)
 
-# Compute decomposition-based ELA features
+# Compute decomposition-based S-ELA features
 print(DecoELA(X_scaled, Y_scaled, H = 50, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr"))
 
-# Compute non-dominated sorting-based ELA features
+# Compute NDS-based S-ELA features
 print(DomiELA(X_scaled, Y_scaled, set_name = "ela_meta"))
 
 
