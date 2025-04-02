@@ -20,7 +20,7 @@ library(ScalarELA)
 # Set problem dimension and sample size
 d <- 2; n.sample <- 100
 
-# Define the bi-objective function from the BBOB benchmark
+# Define the bi-objective function from bbob-biobj
 fn <- smoof::makeBiObjBBOBFunction(d, fid = 1, iid = 1)
 
 # Generate Latin Hypercube Samples (LHS) in [0,1]^d
