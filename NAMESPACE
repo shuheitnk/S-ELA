@@ -1,0 +1,5 @@
+export(DomiELA)
+export(DecoELA)
+export(doAggregate)
+export(weightedsum)
+export(tchebycheff)

@@ -1,0 +1,19 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: ScalarELA
+message: >-
+  If you use {ScalarELA} package, please cite it using the
+  following citation.
+type: software
+authors:
+  - given-names: Shuhei
+    family-names: Tanaka
+    email: 32556009@fukuchiyama.ac.jp
+    affiliation: The University of Fukuchiyama
+    orcid: 'https://orcid.org/0009-0006-3807-4437'
+identifiers:
+  - type: url
+    value: 'https://github.com/shuheitnk/S-ELA.git'
+date-released: '2025-04-03'
