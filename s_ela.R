@@ -1,0 +1,71 @@
+# Function for decomposition-based
+s_ela_deco = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
+  
+  # Ensure the number of solutions and fitness values match
+  n.solutions = nrow(X)
+  n.fitness = nrow(Y)
+  
+  if (n.solutions != n.fitness) {
+    stop("Error: The number of solutions and the number of fitness values must be equal.")
+  } else {
+    
+    # Weight vector for decomposition
+    weight_vector <- decomposition_sld(list(name = "sld", H = H, .nobj = n.fitness))
+    n.weight <- length(weight_vector)
+    
+    # Initialize result list
+    sub_features <- vector("list", n.weight)
+    
+    # Loop over each weight to calculate the new objective values
+    for (i in 1:n.weight) {
+      w <- weight_vector[i]
+      
+      # Calculate new objective values based on the weight
+      Fn <- sapply(1:nrow(Y), function(i) {
+        w[i] * Y[i, j]  
+      })
+      
+      feat_object <- createFeatureObject(X = X, y = Fn)
+      
+      # Calculate feature set for each weight
+      sub_features[[i]] <- calculateFeatureSet(feat_object, set = set_name)
+    }
+    
+    # Aggregate the results if required
+    if (aggregate) {
+      deco <- do_aggregate(sub_features)
+    } else {
+      deco <- sub_features
+    }
+    
+    return(deco)
+  }
+}
+
+# Function for NDS-based feature set
+s_ela_domi = function(X, Y, set_name = NULL){
+  
+  # Ensure the number of solutions and fitness values match
+  n.solutions = nrow(X)
+  n.fitness = nrow(Y)
+  
+  if (n.solutions != n.fitness) {
+    stop("Error: The number of solutions and the number of fitness values must be equal.")
+  } else {
+    
+    # Perform non-dominated sorting and calculate feature set
+    ranks <- ecr:::doNondominatedSortingR(t(Y))$ranks
+    ranks <- as.numeric(ranks)
+    
+    feat_object <- createFeatureObject(X = X, y = ranks)
+    
+    # Calculate the dominance-based feature set
+    domi <- calculateFeatureSet(feat_object, set = set_name)
+    
+    return(domi)
+  }
+}
+
+  
+  
+  
