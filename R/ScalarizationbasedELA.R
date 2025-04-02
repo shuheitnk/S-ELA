@@ -1,5 +1,5 @@
-# Function for decomposition-based
-s_ela_deco = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
+# Function for decomposition-based approach
+DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
   
   # Ensure the number of solutions and fitness values match
   n.solutions = nrow(X)
@@ -42,8 +42,8 @@ s_ela_deco = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
   }
 }
 
-# Function for NDS-based feature set
-s_ela_domi = function(X, Y, set_name = NULL){
+# Function for NDS (non-dominated sorting)-based approach
+DomiELA = function(X, Y, set_name = NULL){
   
   # Ensure the number of solutions and fitness values match
   n.solutions = nrow(X)
