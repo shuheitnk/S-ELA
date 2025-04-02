@@ -4,14 +4,20 @@ This repository contains code and experiments for Automated Algorithm Selection 
 
 For now, only the "developer" version is available from GitHub. To install it, either clone this repository or run:
 
-`devtools::install_github("shuheitnk/S-ELA")`
+```r
+devtools::install_github("shuheitnk/S-ELA")
+```
 
 # Quick Start of S-ELA
 
-`under preparation.`
+```r
+under preparation.
+```
 
 # Citation
 
 If you are using S-ELA, please use the following BibTeX:
 
-`under preparation.`
+```r
+under preparation.
+```
