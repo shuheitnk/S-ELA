@@ -1,5 +1,9 @@
 # Function for decomposition-based approach
 DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
+
+  if (!requireNamespace("flacco", quietly = TRUE)) {
+    stop("The 'flacco' package is required but not installed.")
+  }
   
   # Ensure the number of solutions and fitness values match
   n.solutions = nrow(X)
@@ -44,6 +48,14 @@ DecoELA = function(X, Y, H = 50, aggregate = TRUE, set_name = NULL){
 
 # Function for NDS (non-dominated sorting)-based approach
 DomiELA = function(X, Y, set_name = NULL){
+
+  if (!requireNamespace("flacco", quietly = TRUE)) {
+    stop("The 'flacco' package is required but not installed.")
+  }
+
+  if (!requireNamespace("ecr", quietly = TRUE)) {
+    stop("The 'ecr' package is required but not installed.")
+  }
   
   # Ensure the number of solutions and fitness values match
   n.solutions = nrow(X)
