@@ -6,9 +6,10 @@
 
 To use this package, the following three R packages are required:
 
-1. **smoof** (>= 1.6.0.3): Provides bbob-biobj test suite.
-2. **MOEADr** (>= 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
+1. **ecr** (>= 2.1.1): Provides Non-dominated Sorting (NDS). 
+2. **e1071** (>= 1.7.16): Provides custom ela_distr function.
 3. **flacco** (>= 1.8): Provides the main function to calculate ELA features.
+4. **MOEADr** (>= 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
 
 ## Installation Instructions
 
