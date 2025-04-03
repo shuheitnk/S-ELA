@@ -20,7 +20,7 @@ install.packages(c("lhs", "smoof", "MOEADr", "flacco"))
 devtools::install_github("shuheitnk/ScalarELA")
 ```
 
-Make sure your R version is at least 4.2 (or the compatible version as per package requirements).
+Make sure your R version is at least 4.2.2 (or the compatible version as per package requirements).
 
 
 
