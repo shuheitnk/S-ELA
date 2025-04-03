@@ -19,8 +19,8 @@ You can install the required packages using the following command:
 install.packages(c("lhs", "smoof", "MOEADr", "flacco"))
 devtools::install_github("shuheitnk/ScalarELA")
 ```
+The package has been confirmed to work properly with R version 4.4.1 (released on June 14, 2024). It is expected to function correctly on this version or later. If you are using an earlier version, please ensure that the required dependencies are compatible.
 
-Make sure your R version is at least 4.2.2 (or the compatible version as per package requirements).
 
 
 
