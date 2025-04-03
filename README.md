@@ -38,10 +38,10 @@ Y_max <- apply(Y, 2, max)
 Y_scaled <- (Y - Y_min) / (Y_max - Y_min)
 
 # Compute decomposition-based S-ELA features (ela_distr)
-deco_features = DecoELA(X_scaled, Y_scaled, H = 5, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr"))
+deco_features = DecoELA(X_scaled, Y_scaled, H = 5, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr")
 
 # Compute NDS-based S-ELA features (ela_meta)
-domi_features = DomiELA(X_scaled, Y_scaled, set_name = "ela_meta"))
+domi_features = DomiELA(X_scaled, Y_scaled, set_name = "ela_meta")
 ```
 
 # Citation
