@@ -1,4 +1,27 @@
-# Scalarization-based Exploratory Landscape Analysis for Multi-Objective Continuous Optimization Problems
+# ScalarELA
+
+`ScalarELA` is an R package for scalarization-based Exploratory Landscape Analysis (ELA). This package allows you to compute landscape features for various optimization problems.
+
+## Required Packages
+
+To use this package, the following R packages are required:
+
+1. **ScalarELA**: This package itself.
+2. **lhs** (version 1.2.0): Provides Latin Hypercube Sampling (LHS) to sample solutions.
+3. **smoof** (version 1.6.0.3): Provides bbob-biobj test suite.
+4. **MOEADr** (version 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
+5. **flacco** (version 1.8): Provides the main function to calculate ELA features.
+
+## Installation Instructions
+
+You can install the required packages using the following command:
+
+```r
+install.packages(c("lhs", "smoof", "MOEADr", "flacco"))
+devtools::install_github("shuheitnk/ScalarELA")
+```
+
+Make sure your R version is at least 4.2 (or the compatible version as per package requirements).
 
 
 
