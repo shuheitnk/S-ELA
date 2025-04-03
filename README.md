@@ -1,12 +1,11 @@
 # Scalarization-based Exploratory Landscape Analysis for Multi-Objective Continuous Optimization Problems
 
-This repository contains code and experiments for Automated Algorithm Selection (AAS) and predicting algorithm performance using our proposed Scalarization-based Exploratory Landscape Analysis (S-ELA).
+
 
 # Quick Start of S-ELA
 
 ```r
 # Load required libraries
-library(flacco)
 library(lhs)
 library(smoof)
 library(ScalarELA)
@@ -38,15 +37,17 @@ Y_min <- apply(Y, 2, min)
 Y_max <- apply(Y, 2, max)
 Y_scaled <- (Y - Y_min) / (Y_max - Y_min)
 
-# Compute decomposition-based S-ELA features
-print(DecoELA(X_scaled, Y_scaled, H = 50, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr"))
+# Compute decomposition-based S-ELA features (ela_distr)
+deco_features = DecoELA(X_scaled, Y_scaled, H = 5, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr"))
 
-# Compute NDS-based S-ELA features
-print(DomiELA(X_scaled, Y_scaled, set_name = "ela_meta"))
+# Compute NDS-based S-ELA features (ela_meta)
+domi_features = DomiELA(X_scaled, Y_scaled, set_name = "ela_meta"))
 ```
 
 # Citation
 
 If you are using S-ELA, please use the following BibTeX:
 
-`under preparation.`
+```r
+under preparation.
+```
