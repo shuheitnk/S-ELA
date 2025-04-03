@@ -4,12 +4,11 @@
 
 ## Required Packages
 
-To use this package, the following R packages are required:
+To use this package, the following three R packages are required:
 
-1. **ScalarELA**: This package itself.
-3. **smoof** (>= 1.6.0.3): Provides bbob-biobj test suite.
-4. **MOEADr** (>= 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
-5. **flacco** (>= 1.8): Provides the main function to calculate ELA features.
+1. **smoof** (>= 1.6.0.3): Provides bbob-biobj test suite.
+2. **MOEADr** (>= 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
+3. **flacco** (>= 1.8): Provides the main function to calculate ELA features.
 
 ## Installation Instructions
 
