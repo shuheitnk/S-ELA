@@ -7,7 +7,6 @@
 To use this package, the following R packages are required:
 
 1. **ScalarELA**: This package itself.
-2. **lhs** (>= 1.2.0): Provides Latin Hypercube Sampling (LHS) to sample solutions.
 3. **smoof** (>= 1.6.0.3): Provides bbob-biobj test suite.
 4. **MOEADr** (>= 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
 5. **flacco** (>= 1.8): Provides the main function to calculate ELA features.
