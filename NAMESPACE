@@ -1,0 +1,7 @@
+export(DomiELA)
+export(DecoELA)
+export(doAggregate)
+export(weightedsum)
+export(tchebycheff)
+export(domiDistr)
+importFrom("stats", "sd")
