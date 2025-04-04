@@ -1,4 +1,3 @@
-
 test_that("DomiELA correctly calculates features (ela_meta)", {
   X <- matrix(runif(200), nrow = 100)
   Y <- matrix(runif(200), nrow = 100)
