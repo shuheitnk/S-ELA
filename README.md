@@ -2,6 +2,9 @@
 
 `ScalarELA` is an R package for Scalarization-based Exploratory Landscape Analysis (ELA). This package allows you to compute landscape features for various optimization problems.
 
+![image](https://github.com/user-attachments/assets/13bbda8e-fd45-4502-bfad-1ff4b4a01082)
+
+
 ## Required Packages
 
 To use this package, the following three R packages are required:
