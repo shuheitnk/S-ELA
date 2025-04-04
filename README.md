@@ -35,6 +35,12 @@ devtools::install_github("shuheitnk/S-ELA")
 
 ```r
 # Load required libraries
+if (!requireNamespace("ihs", quietly = TRUE)) {
+  install.packages("ihs")
+}
+if (!requireNamespace("smoof", quietly = TRUE)) {
+  install.packages("smoof")
+}
 library(lhs)
 library(smoof)
 library(ScalarELA)
