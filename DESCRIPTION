@@ -19,10 +19,12 @@ RoxygenNote: 7.3.2
 Depends: 
     R (>= 3.4.0)
 Imports:
-    flacco,
     ecr,
-    MOEADr,
-    e1071
+    e1071,
+    flacco,
+    MOEADr, 
+    lhs, 
+    smoof
 Suggests:
     testthat,
     RANN,
