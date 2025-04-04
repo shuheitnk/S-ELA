@@ -3,7 +3,7 @@
 `ScalarELA` is an R package for Scalarization-based Exploratory Landscape Analysis (ELA). This package allows you to compute landscape features for various optimization problems. 
 S-ELA converts the objective vectors of multi-objective optimization problems into a suitable form, scalar values, for ELA by utilizing decomposition and non-dominated sorting. 
 
-![image](https://github.com/user-attachments/assets/13bbda8e-fd45-4502-bfad-1ff4b4a01082)
+![image](https://github.com/user-attachments/assets/df71a88e-cd1e-44ba-bb1e-da10dba08ffb)
 
 
 ## Required Packages
