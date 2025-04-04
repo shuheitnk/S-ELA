@@ -74,5 +74,11 @@ domi_features = DomiELA(X_scaled, Y_scaled, set_name = "ela_meta")
 If you are using S-ELA, please use the following BibTeX:
 
 ```r
-under preparation.
+@inproceedings{,
+  title={Scalarization-based Exploratory Landscape Analysis for Multi-Objective Continuous Optimization Problems},
+  author={Shuhei, Tanaka and shoichiro, tanaka and toshiharu, hatanaka},
+  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+  pages={--},
+  year={2025}
+}
 ```
