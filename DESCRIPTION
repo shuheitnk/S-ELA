@@ -22,9 +22,7 @@ Imports:
     ecr,
     e1071,
     flacco,
-    MOEADr, 
-    lhs, 
-    smoof
+    MOEADr
 Suggests:
     testthat,
     RANN,
