@@ -16,7 +16,6 @@ To use this package, the following three R packages are required:
 You can install the required packages using the following command:
 
 ```r
-install.packages(c("lhs", "smoof", "MOEADr", "flacco"))
 devtools::install_github("shuheitnk/S-ELA")
 ```
 The package has been confirmed to work properly with R version 4.4.1. It is expected to function correctly on this version or later. If you are using an earlier version, please ensure that the required dependencies are compatible.
