@@ -32,8 +32,6 @@ devtools::install_github("shuheitnk/S-ELA")
 # Example Usage
 
 ```r
-library(lhs)
-library(smoof)
 library(ScalarELA)
 
 # Set problem dimension and sample size
