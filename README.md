@@ -69,7 +69,8 @@ domi_features = DomiELA(X_scaled, Y_scaled, set_name = "ela_meta")
 ```
 
 # Citation
-This package implements the S-ELA method, which is proposed in the upcoming paper accepted at GECCO2025. 
+This package implements S-ELA which is proposed in the upcoming paper accepted at GECCO2025. 
+
 If you are using S-ELA, please use the following BibTeX:
 
 ```r
