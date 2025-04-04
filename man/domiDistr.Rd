@@ -12,7 +12,7 @@
 \arguments{
   \item{y}{A numeric vector}
   \item{skewness.type}{The type of skewness to compute (default is 3L).}
-  \item{kurtosis.type}{The type of kurtosis to compute (default is 3L)}
+  \item{kurtosis.type}{The type of kurtosis to compute (default is 3L).}
 
 }
 \value{
