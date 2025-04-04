@@ -1,6 +1,6 @@
 Package: ScalarELA
 Type: Package
-Title: Scalarization-based Exploratory Landscape Analysis in Multi-Objective Continuous Optimization Problems
+Title: Scalarization-based Exploratory Landscape Analysis
 Version: 0.1.0
 Author: Shuhei Tanaka
 Author@R: c(person("Shuhei", "Tanaka", email = "32556009@fukuchiyama.ac.jp", role = c("aut", "cre")))
