@@ -14,15 +14,6 @@ DomiELA  regard the rank assigned to each solution by non-dominated sorting (NDS
 ![image](https://github.com/user-attachments/assets/df71a88e-cd1e-44ba-bb1e-da10dba08ffb)
 
 
-# Required Packages
-
-To use this package, the following three R packages are required:
-
-1. **ecr** (>= 2.1.1): Provides Non-dominated Sorting (NDS). 
-2. **e1071** (>= 1.7.16): Provides custom ela_distr function.
-3. **flacco** (>= 1.8): Provides the main function to calculate ELA features.
-4. **MOEADr** (>= 1.1.3): Provides Simplex-lattice Design (SLD) for decomposition.
-
 # Installation Instructions
 
 You can install the required packages using the following command:
@@ -34,13 +25,6 @@ devtools::install_github("shuheitnk/S-ELA")
 # Example Usage
 
 ```r
-# Load required libraries
-if (!requireNamespace("ihs", quietly = TRUE)) {
-  install.packages("ihs")
-}
-if (!requireNamespace("smoof", quietly = TRUE)) {
-  install.packages("smoof")
-}
 library(lhs)
 library(smoof)
 library(ScalarELA)
