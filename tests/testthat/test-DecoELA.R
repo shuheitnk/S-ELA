@@ -1,4 +1,3 @@
-
 test_that("DecoELA correctly calculates features", {
   X <- matrix(runif(200), nrow = 100)
   Y <- matrix(runif(200), nrow = 100)
