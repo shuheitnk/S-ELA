@@ -4,4 +4,4 @@ export(doAggregate)
 export(weightedsum)
 export(tchebycheff)
 export(domiDistr)
-importFrom("stats", "sd")
+importFrom("stats", "sd")k
