@@ -13,7 +13,7 @@ DecoELA convert a multi-objective optimization problem into multiple single-obje
 
 ELA features for each sub-problem are aggregated using descriptive statistics (min, mean, max, sd). 
 
-Currently, the available scalarization functions are Weighted Sum and Tchebycheff. 
+Currently, the available scalarization functions are **Weighted Sum** and **Tchebycheff**. 
 
 The decomposition-based approach is implemented by `DecoELA`.
 
@@ -28,7 +28,7 @@ The NDS-based approach is implemented by `DomiELA`.
 
 
 # Installation Instructions
-You can install the required packages using the following command:
+You can install `ScalarELA` using the following command:
 
 ```r
 devtools::install_github("shuheitnk/S-ELA")
