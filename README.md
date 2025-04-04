@@ -9,9 +9,18 @@ If you are using an earlier version, please ensure R version 3.4.0 or above.
 
 # Main Functions
 ## DecoELA
-DecoELA convert a multi-objective optimization problem into multiple single-objective sub-problems using weight vectors and apply ELA to each sub-problem. ELA features for each sub-problem are aggregated using descriptive statistics (min, mean, max, sd). Currently, the available scalarization functions are Weighted Sum and Tchebycheff. The decomposition-based approach is implemented by `DecoELA`.
+DecoELA convert a multi-objective optimization problem into multiple single-objective sub-problems using weight vectors and apply ELA to each sub-problem. 
+
+ELA features for each sub-problem are aggregated using descriptive statistics (min, mean, max, sd). Currently, the available scalarization functions are Weighted Sum and Tchebycheff. 
+
+The decomposition-based approach is implemented by `DecoELA`.
+
 ## DomiELA
-DomiELA  regard the rank assigned to each solution by non-dominated sorting (NDS) as the objective value and apply ELA. These approaches allow conventional ELA to calculate features of multi-objective continuous optimization problems. The NDS-based approach is implemented by `DomiELA`.
+DomiELA  regard the rank assigned to each solution by non-dominated sorting (NDS) as the objective value and apply ELA. 
+
+These approaches allow conventional ELA to calculate features of multi-objective continuous optimization problems. 
+
+The NDS-based approach is implemented by `DomiELA`.
 
 ![image](https://github.com/user-attachments/assets/df71a88e-cd1e-44ba-bb1e-da10dba08ffb)
 
