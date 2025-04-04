@@ -11,7 +11,9 @@ If you are using an earlier version, please ensure R version 3.4.0 or above.
 ## DecoELA
 DecoELA convert a multi-objective optimization problem into multiple single-objective sub-problems using weight vectors and apply ELA to each sub-problem. 
 
-ELA features for each sub-problem are aggregated using descriptive statistics (min, mean, max, sd). Currently, the available scalarization functions are Weighted Sum and Tchebycheff. 
+ELA features for each sub-problem are aggregated using descriptive statistics (min, mean, max, sd). 
+
+Currently, the available scalarization functions are Weighted Sum and Tchebycheff. 
 
 The decomposition-based approach is implemented by `DecoELA`.
 
