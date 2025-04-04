@@ -1,25 +1,20 @@
 # ScalarELA
-`ScalarELA` is an R package for implementing **Scalarization-based Exploratory Landscape Analysis (S-ELA)**. This package allows you to compute landscape features for various optimization problems. 
-
-S-ELA converts the objective vectors of multi-objective optimization problems into a suitable form, scalar values, for ELA by utilizing decomposition and non-dominated sorting. 
+`ScalarELA` is an R package for implementing **Scalarization-based Exploratory Landscape Analysis (S-ELA)**. 
+This package allows you to compute landscape features for various optimization problems. 
 
 This package has been confirmed to work properly with R version 4.4.1. It is expected to function correctly on this version or later. 
-
 If you are using an earlier version, please ensure R version 3.4.0 or above. 
 
 # Main Functions
 ## DecoELA
 DecoELA convert a multi-objective optimization problem into multiple single-objective sub-problems using weight vectors and apply ELA to each sub-problem. 
-
 ELA features for each sub-problem are aggregated using descriptive statistics (min, mean, max, sd). 
-
 Currently, the available scalarization functions are **Weighted Sum** and **Tchebycheff**. 
 
 The decomposition-based approach is implemented by `DecoELA`.
 
 ## DomiELA
 DomiELA  regard the rank assigned to each solution by non-dominated sorting (NDS) as the objective value and apply ELA. 
-
 These approaches allow conventional ELA to calculate features of multi-objective continuous optimization problems. 
 
 The NDS-based approach is implemented by `DomiELA`.
