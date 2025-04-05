@@ -37,7 +37,7 @@ library(ScalarELA)
 # Set problem dimension and sample size
 d <- 2; n.sample <- 100
 
-# Define the bi-objective function from bbob-biobj
+# Define a bi-objective optimization problem from bbob-biobj
 fn <- smoof::makeBiObjBBOBFunction(d, fid = 1, iid = 1)
 
 # Generate sample solutions via Improved Latin Hypercube Sampling in [0,1]^d
@@ -47,13 +47,13 @@ samples <- lhs::improvedLHS(n.sample, d)
 fn.lower <- smoof::getLowerBoxConstraints(fn)
 fn.upper <- smoof::getUpperBoxConstraints(fn)
 
-# Scale samples to input the sampled solutions into the function
+# Scale samples
 X <- sweep(samples, 2, fn.lower, "+") * (fn.upper - fn.lower)
 
-# Evaluate the function at the sampled solutions
+# Evaluate the function at sampled solutions
 Y <- t(apply(X, 1, fn))
 
-# Compute decomposition-based S-ELA features (ela_distr)
+# Compute decomposition-based S-ELA features
 deco_features = DecoELA(X,                            # Sampled solutions (matrix)
                         Y,                            # Objective values (matrix)
                         normalize_X = TRUE,           # Whether to normalize sampled solutions
@@ -65,7 +65,7 @@ deco_features = DecoELA(X,                            # Sampled solutions (matri
                         set_name = "ela_distr"        # Feature set name (ela_meta, ela_distr, disp, nbc, ic, pca, fdc)
                         )
 
-# Compute NDS-based S-ELA features (ela_meta)
+# Compute NDS-based S-ELA features
 domi_features = DomiELA(X,
                         Y,
                         normalize_X = TRUE,
@@ -82,7 +82,7 @@ If you are using S-ELA, please use the following BibTeX:
 ```r
 @inproceedings{,
   title={Scalarization-based Exploratory Landscape Analysis for Multi-Objective Continuous Optimization Problems},
-  author={Shuhei, Tanaka and shoichiro, tanaka and toshiharu, hatanaka},
+  author={Shuhei, Tanaka and Shoichiro, Tanaka and Toshiharu, Hatanaka},
   booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
   pages={--},
   year={2025}
