@@ -54,6 +54,14 @@ test_that("DecoELA correctly calculates features (ic)", {
   expect_true(all(grepl("^deco\\.", names(deco_features))))
 })
 
+test_that("DecoELA correctly calculates features (fdc)", {
+  X <- matrix(runif(200), nrow = 100)
+  Y <- matrix(runif(200), nrow = 100)
+  deco_features <- DecoELA(X = X, Y = Y, aggregate = TRUE, H = 5, scalar_func = "weightedsum", set_name = "fdc")
+  expect_is(deco_features, "list")
+  expect_true(all(grepl("^deco\\.", names(deco_features))))
+})
+
 # Test for DecoELA with errors
 test_that("DecoELA handles errors correctly", {
   X <- matrix(runif(20), nrow = 10)

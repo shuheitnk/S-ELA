@@ -58,12 +58,18 @@ test_that("DomiELA correctly calculates features (ic)", {
   X <- matrix(runif(200), nrow = 100)
   Y <- matrix(runif(200), nrow = 100)
   domi_features = DomiELA(X, Y, set_name = "ic")
-
   expect_is(domi_features, "list")
   expect_true(all(grepl("^domi\\.", names(domi_features))))
 })
 
+test_that("DomiELA correctly calculates features (fdc)", {
 
+  X <- matrix(runif(200), nrow = 100)
+  Y <- matrix(runif(200), nrow = 100)
+  domi_features = DomiELA(X, Y, set_name = "fdc")
+  expect_is(domi_features, "list")
+  expect_true(all(grepl("^domi\\.", names(domi_features))))
+})
 
 
 test_that("DomiELA handles errors correctly", {
