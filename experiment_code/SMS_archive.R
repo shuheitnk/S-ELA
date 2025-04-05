@@ -64,7 +64,7 @@ for (iid in 1:5) {
         moleopt::runif_box(fn_lower, fn_upper)
       }))
       
-      # Run SMS-EMOA optimization
+      # Run SMS-EMOA
       time_sms <- system.time({
         solutions <- get_sms_fitness(
           seed = seed,
