@@ -1,138 +1,114 @@
-# Load libraries
-library(optparse)
-library(smoof)
-library(ecr)
-library(ecr3vis)
-library(plyr)
-library(moleopt)
-library(purrr)
-
-source("MakeBiObjBBOB.R")
+# Load necessary files and data
 source("compute_hv.R")
-source("get_nadir.R")
 biobj_info <- read.csv("bbob_biobj_ideal_nadir.csv", fileEncoding = "UTF-8")
 
-# Define common options
-common_option = list(
-  make_option("--n.dim", type = "numeric", default = 2, help = "The dimensionality"),
-  make_option("--n.obj", type = "numeric", default = 2, help = "The number of objectives"),
-  make_option("--common_seed", type = "numeric", default = 2025L, help = "Common seed for reproducibility"),
-  make_option("--n.repeat", type = "numeric", default = 31, help = "The number of repetitions"),
-  make_option("--budget", type = "numeric", default = 20000L, help = "The maximum number of allowed function evaluations")
+# Define general options
+common_option <- list(
+  optparse::make_option("--n.dim", type = "numeric", default = 2, help = "Dimensionality of the problem"),
+  optparse::make_option("--n.obj", type = "numeric", default = 2, help = "Number of objectives"),
+  optparse::make_option("--common_seed", type = "numeric", default = 2025L, help = "Seed for reproducibility"),
+  optparse::make_option("--n.repeat", type = "numeric", default = 31, help = "Number of repetitions"),
+  optparse::make_option("--budget", type = "numeric", default = 20000L, help = "Maximum function evaluations")
 )
 
-common_parser = OptionParser(option_list=common_option)
-common_opt = parse_args(common_parser)
+common_parser <- optparse::OptionParser(option_list = common_option)
+common_opt <- optparse::parse_args(common_parser)
 
-mole_list = list(
-  make_option("--max_local_sets", type = "numeric", default = 20000L),
-  make_option("--epsilon_gradient", type = "numeric", default = 1e-5, help = ""),
-  make_option("--descent_direction_min", type = "numeric", default = 1e-8, help = ""),
-  make_option("--descent_step_min", type = "numeric", default = 1e-5, help = ""),
-  make_option("--descent_step_max", type = "numeric", default = 0.01, help = ""),
-  make_option("--descent_scale_factor", type = "numeric", default = 2, help = ""),
-  make_option("--descent_armijo_factor", type = "numeric", default = 1e-4, help = "[recCrossover, recIntermediate, recOX, recPMX, recSBX]"),
-  make_option("--descent_history_size", type = "numeric", default = 100, help = ""),
-  make_option("--descent_max_iter", type = "numeric", default = 1000, help = ""),
-  make_option("--explore_step_min", type = "numeric", default = 1e-4, help = ""),
-  make_option("--explore_step_max", type = "numeric", default = 1e-1, help = ""),
-  make_option("--explore_angle_max", type = "numeric", default = 20, help = ""),
-  make_option("--explore_scale_factor", type = "numeric", default = 2, help = ""),
-  make_option("--refine_after_nstarts", type = "numeric", default = 10, help = ""),
-  make_option("--refine_hv_target", type = "numeric", default = 2e-5, help = "")
+# Define MOLE-specific options
+mole_option <- list(
+  optparse::make_option("--max_local_sets", type = "numeric", default = 20000L),
+  optparse::make_option("--epsilon_gradient", type = "numeric", default = 1e-5),
+  optparse::make_option("--descent_direction_min", type = "numeric", default = 1e-8),
+  optparse::make_option("--descent_step_min", type = "numeric", default = 1e-5),
+  optparse::make_option("--descent_step_max", type = "numeric", default = 0.01),
+  optparse::make_option("--descent_scale_factor", type = "numeric", default = 2),
+  optparse::make_option("--descent_armijo_factor", type = "numeric", default = 1e-4),
+  optparse::make_option("--descent_history_size", type = "numeric", default = 100),
+  optparse::make_option("--descent_max_iter", type = "numeric", default = 1000),
+  optparse::make_option("--explore_step_min", type = "numeric", default = 1e-4),
+  optparse::make_option("--explore_step_max", type = "numeric", default = 1e-1),
+  optparse::make_option("--explore_angle_max", type = "numeric", default = 20),
+  optparse::make_option("--explore_scale_factor", type = "numeric", default = 2),
+  optparse::make_option("--refine_after_nstarts", type = "numeric", default = 10),
+  optparse::make_option("--refine_hv_target", type = "numeric", default = 2e-5)
 )
 
-mole_parser = OptionParser(option_list=mole_list)
-mole_opt = parse_args(mole_parser)
+mole_parser <- optparse::OptionParser(option_list = mole_option)
+mole_opt <- optparse::parse_args(mole_parser)
 
-
+# Set seed and prepare unique random seeds for each repetition
 set.seed(common_opt$common_seed)
-random_numbers_unique <- sample(1:100, common_opt$n.repeat, replace = FALSE)
-random_numbers_unique <- random_numbers_unique[1:common_opt$n.repeat]
+random_seeds <- sample(1:100, common_opt$n.repeat, replace = FALSE)
 
-
-# Loop through random seeds
+# Loop over problem instances (iid)
 for (iid in 1:5) {
-  roop <- 0
+  repetition_id <- 0
   
-  for (roop_seed in random_numbers_unique) {
-    # Pre-allocate storage for Archive_Data and all_hv_data
-    
+  for (seed in random_seeds) {
+    repetition_id <- repetition_id + 1
     all_hv_data <- matrix(NA, nrow = 0, ncol = 4)
-    roop <- roop + 1
     
-    
-    # Define optimization problems
+    # Define 55 BBOB bi-objective functions
     problems <- lapply(1:55, function(fid) {
-      list(fn = makeBiObjBBOBFunction(dimensions = 2, fid = fid, iid = iid), func_id = fid)
+      list(
+        fn = smoof::makeBiObjBBOBFunction(dimensions = common_opt$n.dim, fid = fid, iid = iid),
+        func_id = fid
+      )
     })
     
-    # Loop through each problem
+    # Evaluate each problem
     for (problem in problems) {
-      obj.fn <- problem$fn
-      func_id <- problem$func_id
+      fn <- problem$fn
+      fid <- problem$func_id
+      fn_name <- smoof::getName(fn)
+      fn_lower <- smoof::getLowerBoxConstraints(fn)
+      fn_upper <- smoof::getUpperBoxConstraints(fn)
       
-      instance_name <- smoof::getName(obj.fn)
-      fn.lower <- smoof::getLowerBoxConstraints(obj.fn)
-      fn.upper <- smoof::getUpperBoxConstraints(obj.fn)
+      # Generate starting points
+      n_starts <- 100
+      starting_points <- do.call(rbind, lapply(1:n_starts, function(x) {
+        moleopt::runif_box(fn_lower, fn_upper)
+      }))
       
-      
-      nstarts <- 100
-      starting_points <- lapply(1:nstarts, function(x) runif_box(fn.lower, fn.upper))
-      starting_points <- do.call(rbind, starting_points)
-      
+      # Run MOLE optimization
       time_mole <- system.time({
-        # Run mole optimization
-        
-        mole_trace <- run_mole(obj.fn, starting_points,
-                               max_local_sets = 1000,
-                               epsilon_gradient = 1e-8,
-                               descent_direction_min = 1e-6,
-                               descent_step_min = 1e-6,
-                               descent_step_max = sqrt(sum((fn.upper - fn.lower) ** 2)) / 100,
-                               descent_scale_factor = 2,
-                               descent_armijo_factor = 1e-4,
-                               descent_history_size = 100,
-                               descent_max_iter = 1000,
-                               explore_step_min = 1e-4,
-                               explore_step_max = 1e-2,
-                               # explore_step_max = sqrt(sum((upper - lower) ** 2)) / 100,
-                               explore_angle_max = 20,
-                               explore_scale_factor = 2,
-                               refine_after_nstarts = 100,
-                               refine_hv_target = 2e-5,
-                               # custom_descent_fn = create_lbfgsb_descent(f, lower, upper),
-                               # lower = rep(-100, length(lower)),
-                               # upper = rep(100, length(upper)),
-                               max_budget = common_opt$budget,
-                               logging = "none"
+        mole_trace <- moleopt::run_mole(
+          fn, starting_points,
+          max_local_sets        = mole_opt$max_local_sets,
+          epsilon_gradient      = mole_opt$epsilon_gradient,
+          descent_direction_min = mole_opt$descent_direction_min,
+          descent_step_min      = mole_opt$descent_step_min,
+          descent_step_max      = sqrt(sum((fn_upper - fn_lower)^2)) / 100,
+          descent_scale_factor  = mole_opt$descent_scale_factor,
+          descent_armijo_factor = mole_opt$descent_armijo_factor,
+          descent_history_size  = mole_opt$descent_history_size,
+          descent_max_iter      = mole_opt$descent_max_iter,
+          explore_step_min      = mole_opt$explore_step_min,
+          explore_step_max      = mole_opt$explore_step_max,
+          explore_angle_max     = mole_opt$explore_angle_max,
+          explore_scale_factor  = mole_opt$explore_scale_factor,
+          refine_after_nstarts  = mole_opt$refine_after_nstarts,
+          refine_hv_target      = mole_opt$refine_hv_target,
+          max_budget            = common_opt$budget,
+          logging               = "none"
         )
         
-        mole_solution <- t(mole_trace$sets[[1]]$obj_space)
-        
+        solutions <- t(mole_trace$sets[[1]]$obj_space)
       })
       
-      nadir_point <- get_nadir(biobj_info, func_id, iii)
-      better_sol <- unique(mole_solution[, mole_solution[1, ] <= nadir_point[1] & mole_solution[2, ] <= nadir_point[2]])
-      hv <- compute_hv(better_sol, nadir_point)
+      # Compute hypervolume
+      nadir <- get_nadir(biobj_info, fid, iid)
+      ideal_hv <- get_ideal_hv(biobj_info, fid, iid)
+      non_dominated <- unique(solutions[, solutions[1, ] <= nadir[1] & solutions[2, ] <= nadir[2]])
+      hv <- compute_hv(non_dominated, nadir)
+      normalized_hv <- hv / ideal_hv
       
-      Ideal_hv <- get_ideal_hv(biobj_info, func_id, iii)
+      # Save HV result
+      hv_entry <- c(instance = fn_name, seed = seed, repetition = repetition_id, normalized_hv = normalized_hv)
+      all_hv_data <- rbind(all_hv_data, hv_entry)
       
-      normalized_hv <- hv / Ideal_hv
-      hv_data <- c(instance = instance_name, seed = roop_seed, roop = roop, normalized_hv = normalized_hv)
-      
-      
-      # Append HV data directly to the matrix
-      all_hv_data <- rbind(all_hv_data, hv_data)
-      
-      print(paste("instance name ", instance_name, "roop: ", roop))
-      print(paste("process time: ", time_mole["elapsed"], "sec"))
+      # Print progress
+      cat(sprintf("Instance: %s | Repetition: %d | Normalized_HV: %f | Elapsed time: %.2f sec\n", fn_name, repetition_id, normalized_hv, time_mole["elapsed"]))
     }
-    
-    # Write HV data and solution data to file
-    #file_name_hv <- paste0("mole_hv_instance", iid, ".csv")
-    #write.table(all_hv_data, file = file_name_hv, col.names = FALSE, row.names = FALSE, append = TRUE, sep = ",")
-    
   }
-  
 }
