@@ -53,19 +53,11 @@ X <- sweep(samples, 2, fn.lower, "+") * (fn.upper - fn.lower)
 # Evaluate the function at the sampled solutions
 Y <- t(apply(X, 1, fn))
 
-# Normalize variables to [0,1] range
-X_scaled <- (X - fn.lower) / (fn.upper - fn.lower)
-
-# Normalize objective values to [0,1] range
-Y_min <- apply(Y, 2, min)
-Y_max <- apply(Y, 2, max)
-Y_scaled <- (Y - Y_min) / (Y_max - Y_min)
-
 # Compute decomposition-based S-ELA features (ela_distr)
-deco_features = DecoELA(X_scaled, Y_scaled, H = 5, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr")
+deco_features = DecoELA(X, Y, normalize_X = TRUE, normalize_Y = TRUE, normalize_G = TRUE, H = 5, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr")
 
 # Compute NDS-based S-ELA features (ela_meta)
-domi_features = DomiELA(X_scaled, Y_scaled, set_name = "ela_meta")
+domi_features = DomiELA(X, Y, normalize_X = TRUE, normalize_R = TRUE, set_name = "ela_meta")
 ```
 
 # Citation
