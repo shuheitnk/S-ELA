@@ -66,7 +66,7 @@ for (iid in 1:10) {
       # Run NSGA-II
       time_nsga <- system.time({
         solutions <- get_nsga_fitness(
-          seed = roop_seed,
+          seed = seed,
           fitness.fun = fn,
           n.objectives = common_opt$n.obj,
           n.dim = common_opt$n.dim,
