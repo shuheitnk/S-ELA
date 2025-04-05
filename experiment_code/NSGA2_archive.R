@@ -63,7 +63,7 @@ for (iid in 1:10) {
         moleopt::runif_box(fn_lower, fn_upper)
       }))
       
-      # Run MOLE optimization
+      # Run NSGA-II
       time_nsga <- system.time({
         solutions <- get_nsga_fitness(
           seed = roop_seed,
