@@ -50,6 +50,7 @@ get_nsga_fitness = function(
 }
 
 
+
 nsga2 = function(
     seed = NULL,
     fitness.fun,
@@ -75,6 +76,8 @@ nsga2 = function(
                   terminators = terminators, ...)
   return(res)
 }
+
+
 
 ecr_nsga2 = function(
     seed = NULL, fitness.fun, minimize = NULL, n.objectives = NULL,
@@ -203,15 +206,12 @@ ecr_nsga2 = function(
   return(makeECRResult(control, log, population, fitness, stop.object))
 }
 
-
-doTerminate = function(log, stop.conds) {
+doTerminate = function (log, stop.conds) 
+{
   stop.object = list()
-  # if we have not specified any stopping conditions always return the empty object
   if (!length(stop.conds)) {
     return(stop.object)
   }
-  
-  # otherwise iterate over stopping conditions and check
   for (stop.conds in stop.conds) {
     shouldStop = stop.conds(log = log)
     if (shouldStop) {
@@ -223,147 +223,14 @@ doTerminate = function(log, stop.conds) {
   return(stop.object)
 }
 
-
-makeECRResult = function(control, log, population, fitness, stop.object, ...) {
+makeECRResult = function (control, log, population, fitness, stop.object, ...) 
+{
   n.objectives = control$task$n.objectives
-  if (n.objectives == 1L)
-    return(setupResult.ecr_single_objective(population, fitness, control, log, stop.object, ...))
-  moo.res = setupResult.ecr_multi_objective(population, fitness, control, log, stop.object, ...)
+  if (n.objectives == 1L) 
+    return(setupResult.ecr_single_objective(population, fitness, 
+                                            control, log, stop.object, ...))
+  moo.res = setupResult.ecr_multi_objective(population, fitness, 
+                                            control, log, stop.object, ...)
   moo.res = filterDuplicated(moo.res)
   return(moo.res)
-}
-
-transformFitness = function(fitness, task, selector) {
-  # logical vector of opt directions
-  task.dir = task$minimize
-  # "vectorize" character indicating supported opt direction by selector
-  sup.dir = rep(attr(selector, "supported.opt.direction"), task$n.objectives)
-  # "logicalize" selector opt direction
-  sup.dir = (sup.dir == "minimize")
-  
-  fn.scale = ifelse(xor(task.dir, sup.dir), -1, 1)
-  
-  # build transformation matrix
-  fn.scale = if (task$n.objectives == 1L) {
-    #FIXME: R BUG?!?!
-    # diag(ifelse(xor(task.dir, sup.dir), -1, 1)) breaks with message
-    # Fehler in diag(ifelse(xor(task.dir, sup.dir), -1, 1)) : ung"ultiger 'nrow' Wert (< 0)
-    # if n.objectives is 1! -.-
-    # Weird R bug??? diag(1) works!
-    as.matrix(fn.scale)
-  } else {
-    diag(fn.scale)
-  }
-  
-  # transform fitness
-  return(fn.scale %*% fitness)
-}
-
-
-setupResult.ecr_multi_objective = function(population, fitness, control, log, stop.object) {
-  fitness = transformFitness(fitness, control$task, control$selectForMating)
-  
-  makeS3Obj(
-    task = control$task,
-    log = log,
-    last.population = population,
-    message = stop.object$message,
-    classes = c("ecr_multi_objective_result", "ecr_result")
-  )
-}
-
-selNondom = makeSelector(
-  selector = function(fitness, n.select) {
-    nondom.layers = doNondominatedSorting(fitness)
-    
-    # storage for indizes of selected individuals
-    new.pop.idxs = integer()
-    
-    # get maximum rank, i.e., the number of domination layers
-    max.rank = max(nondom.layers$ranks)
-    
-    # get the indizes of points for each domination layer
-    idxs.by.rank = lapply(seq(max.rank), function(r) which(nondom.layers$ranks == r))
-    
-    # get the number of points in each domination layer ...
-    front.len = sapply(idxs.by.rank, length)
-    
-    # ... cumulate the number of points of the domination layers ...
-    cum.front.len = cumsum(front.len)
-    
-    # ... and determine the first domination layer, which does not fit as a whole
-    front.first.nonfit = which.first(cum.front.len > n.select)
-    
-    if (front.first.nonfit > 1L) {
-      # in this case at least one nondominated front can be added
-      new.pop.idxs = unlist(idxs.by.rank[1:(front.first.nonfit - 1L)])
-    }
-    
-    # how many points to select by second criterion, i.e., crowding distance?
-    n.diff = n.select - length(new.pop.idxs)
-    
-    if (n.diff > 0L) {
-      idxs.first.nonfit = idxs.by.rank[[front.first.nonfit]]
-      cds = computeCrowdingDistance(fitness[, idxs.first.nonfit, drop = FALSE])
-      idxs2 = order(cds, decreasing = TRUE)[1:n.diff]
-      new.pop.idxs = c(new.pop.idxs, idxs.first.nonfit[idxs2])
-    }
-    
-    # merge the stuff and return
-    return(new.pop.idxs)
-  },
-  supported.objectives = "multi-objective")
-
-
-setup = function(operator, ...) {
-  assertClass(operator, "ecr_operator")
-  args = list(...)
-  attrs = attributes(operator)
-  fn = function(x, ...) {
-    do.call(operator, c(list(x), BBmisc::insert(args, list(...))))
-  }
-  attributes(fn) = attrs
-  return(fn)
-}
-
-getDefaultEvolutionaryOperators = function(representation, type, n.objectives, control) {
-  if (n.objectives == 1L) {
-    return(getSingleObjectiveDefaults(representation, type, control))
-  }
-  return(getMultiObjectiveDefaults(representation, type, control))
-}
-
-getMultiObjectiveDefaults = function(representation, type, control) {
-  defaults = list(
-    "float" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = try(setup(mutGauss), silent = TRUE),
-      "recombinator" = setup(recIntermediate),
-      "survival.selector" = setup(selNondom)
-    ),
-    "binary" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = setup(mutBitflip),
-      "recombinator" = setup(recCrossover),
-      "survival.selector" = setup(selNondom)
-    ),
-    "permutation" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = setup(mutSwap),
-      "recombinator" = setup(recPMX),
-      "survival.selector" = setup(selNondom)
-    ),
-    "custom" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = NULL,
-      "recombinator" = NULL,
-      "survival.selector" = setup(selNondom)
-    )
-  )
-  
-  if (representation %in% names(defaults)) {
-    return(defaults[[representation]][[type]])
-  }
-  stopf("No defaults availiable for custom representation. You need to specify all
-    operators by hand.")
 }
