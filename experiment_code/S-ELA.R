@@ -2,9 +2,8 @@
 # Source necessary files
 
 source("calculate_new_feature.R")
-source("MakeBiObjBBOB.R")
 source("makeObject.R")
-source("FitnessDistance.R")
+
 
 # Initialize parameters
 d = 2
