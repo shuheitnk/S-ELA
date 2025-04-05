@@ -276,7 +276,7 @@ transformFitness = function (fitness, task, selector)
 
 setupResult.ecr_multi_objective = function (population, fitness, control, log, stop.object) 
 {
-  fitness = ecr:::transformFitness(fitness, control$task, control$selectForMating)
+  fitness = transformFitness(fitness, control$task, control$selectForMating)
   pareto.idx = which.nondominated(fitness)
   pareto.front = as.data.frame(t(fitness[, pareto.idx, drop = FALSE]))
   colnames(pareto.front) = control$task$objective.names
