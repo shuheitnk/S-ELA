@@ -1,4 +1,4 @@
-# <h1 style="color: blue;">ScalarELA</h1
+<h1 style="color: blue;">ScalarELA</h1
 `ScalarELA` is an R package for implementing **Scalarization-based Exploratory Landscape Analysis (S-ELA)**. 
 This package allows you to compute landscape features for various optimization problems. 
 
