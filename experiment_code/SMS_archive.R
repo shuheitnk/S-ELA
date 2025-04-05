@@ -1,128 +1,101 @@
-# Load libraries
-library(optparse)
-library(smoof)
-library(ecr)
-library(ecr3vis)
-library(plyr)
-
 source("SMS-EMOA.R")
-source("MakeBiObjBBOB.R")
 source("compute_hv.R")
-source("get_nadir.R")
 biobj_info <- read.csv("bbob_biobj_ideal_nadir.csv", fileEncoding = "UTF-8")
 
 # Define common options
 common_option = list(
-  make_option("--n.dim", type = "numeric", default = 2, help = "The dimensionality"),
-  make_option("--n.obj", type = "numeric", default = 2, help = "The number of objectives"),
-  make_option("--common_seed", type = "numeric", default = 2025L, help = "Common seed for reproducibility"),
-  make_option("--n.repeat", type = "numeric", default = 31, help = "The number of repetitions"),
-  make_option("--budget", type = "numeric", default = 20000L, help = "The maximum number of allowed function evaluations")
+  optparse::make_option("--n.dim", type = "numeric", default = 2, help = "The dimensionality"),
+  optparse::make_option("--n.obj", type = "numeric", default = 2, help = "The number of objectives"),
+  optparse::make_option("--common_seed", type = "numeric", default = 2025L, help = "Common seed for reproducibility"),
+  optparse::make_option("--n.repeat", type = "numeric", default = 31, help = "The number of repetitions"),
+  optparse::make_option("--budget", type = "numeric", default = 20000L, help = "The maximum number of allowed function evaluations")
 )
 
-common_parser = OptionParser(option_list=common_option)
-common_opt = parse_args(common_parser)
+common_parser = optparse::OptionParser(option_list=common_option)
+common_opt = optparse::parse_args(common_parser)
 
 # Define SMS options
 sms_option = list(
-  make_option("--mu", type = "numeric", default = 100L),
-  make_option("--mutator", type = "character", default = "mutPolynomial", help = ""),
-  make_option("--mutPolynomial_p", type = "numeric", default = 0.2, help = "The probability of mutation"),
-  make_option("--mutPolynomial_eta", type = "numeric", default = 20, help = "The distribution index of mutation"),
-  make_option("--recombinator", type = "character", default = "recSBX", help = ""),
-  make_option("--recSBX_p", type = "numeric", default = 0.9, help = "The probability of crossover"),
-  make_option("--recSBX_eta", type = "numeric", default = 20, help = "The distribution index of crossover"),
-  make_option("--log", type = "logical", default = TRUE, help = "Archive all solutions")
+  optparse::make_option("--mu", type = "numeric", default = 100L),
+  optparse::make_option("--mutator", type = "character", default = "mutPolynomial", help = ""),
+  optparse::make_option("--mutPolynomial_p", type = "numeric", default = 0.2, help = "The probability of mutation"),
+  optparse::make_option("--mutPolynomial_eta", type = "numeric", default = 20, help = "The distribution index of mutation"),
+  optparse::make_option("--recombinator", type = "character", default = "recSBX", help = ""),
+  optparse::make_option("--recSBX_p", type = "numeric", default = 0.9, help = "The probability of crossover"),
+  optparse::make_option("--recSBX_eta", type = "numeric", default = 20, help = "The distribution index of crossover"),
+  optparse::make_option("--log", type = "logical", default = TRUE, help = "Archive all solutions")
 )
 
-sms_parser = OptionParser(option_list=sms_option)
-sms_opt = parse_args(sms_parser)
+sms_parser = optparse::OptionParser(option_list=sms_option)
+sms_opt = optparse::parse_args(sms_parser)
 
+# Set seed and prepare unique random seeds for each repetition
 set.seed(common_opt$common_seed)
-random_numbers_unique <- sample(1:100, common_opt$n.repeat, replace = FALSE)
-random_numbers_unique <- random_numbers_unique[12]
+random_seeds <- sample(1:100, common_opt$n.repeat, replace = FALSE)
 
-
-# Loop through random seeds
-for (iii in 10:10) {
-  roop <- 11
+# Loop over problem instances (iid)
+for (iid in 1:5) {
+  rep_id <- 0
   
-  for (roop_seed in random_numbers_unique) {
-    # Pre-allocate storage for Archive_Data and all_hv_data
-    Archive_Data <- matrix(NA, nrow = 0, ncol = common_opt$budget + 4)
+  for (seed in random_seeds) {
+    rep_id <- rep_id + 1
     all_hv_data <- matrix(NA, nrow = 0, ncol = 4)
-    roop <- roop + 1
     
-    
-    # Define optimization problems
-    problems <- lapply(43:55, function(fid) {
-      list(fn = makeBiObjBBOBFunction(dimensions = 2, fid = fid, iid = iii), func_id = fid)
+    # Define 55 BBOB bi-objective functions
+    problems <- lapply(1:55, function(fid) {
+      list(
+        fn = smoof::makeBiObjBBOBFunction(dimensions = common_opt$n.dim, fid = fid, iid = iid),
+        func_id = fid
+      )
     })
     
-    # Loop through each problem
+    # Evaluate each problem
     for (problem in problems) {
-      obj.fn <- problem$fn
-      func_id <- problem$func_id
+      fn <- problem$fn
+      fid <- problem$func_id
+      fn_name <- smoof::getName(fn)
+      fn_lower <- smoof::getLowerBoxConstraints(fn)
+      fn_upper <- smoof::getUpperBoxConstraints(fn)
       
-      instance_name <- smoof::getName(obj.fn)
-      fn.lower <- smoof::getLowerBoxConstraints(obj.fn)
-      fn.upper <- smoof::getUpperBoxConstraints(obj.fn)
+      # Generate starting points
+      n_starts <- 100
+      starting_points <- do.call(rbind, lapply(1:n_starts, function(x) {
+        moleopt::runif_box(fn_lower, fn_upper)
+      }))
       
+      # Run MOLE optimization
       time_sms <- system.time({
-        # Run SMS-EMOA optimization
-        sms_solution <- get_sms_fitness(
-          seed = roop_seed,
-          fitness.fun = obj.fn,
+        solutions <- get_sms_fitness(
+          seed = seed,
+          fitness.fun = fn,
           n.objectives = common_opt$n.obj,
           n.dim = common_opt$n.dim,
           minimize = TRUE,
-          lower = fn.lower,
-          upper = fn.upper,
+          lower = fn_lower,
+          upper = fn_upper,
           mu = sms_opt$mu,
           lambda = 1,
           ref.point = NULL,
-          mutator = setup(mutPolynomial, p = sms_opt$mutPolynomial_p, eta = sms_opt$mutPolynomial_eta, lower = fn.lower, upper = fn.upper),
-          recombinator = setup(recSBX, eta = sms_opt$recSBX_eta, p = sms_opt$recSBX_p, lower = fn.lower, upper = fn.upper),
+          mutator = setup(mutPolynomial, p = sms_opt$mutPolynomial_p, eta = sms_opt$mutPolynomial_eta, lower = fn_lower, upper = fn_upper),
+          recombinator = setup(recSBX, eta = sms_opt$recSBX_eta, p = sms_opt$recSBX_p, lower = fn_lower, upper = fn_upper),
           terminators = list(stopOnEvals(max.evals = common_opt$budget)),
           log.pop = sms_opt$log
         )
       })
       
-      nadir_point <- get_nadir(biobj_info, func_id, iii)
-      better_sol <- unique(sms_solution[, sms_solution[1, ] <= nadir_point[1] & sms_solution[2, ] <= nadir_point[2]])
-      hv <- compute_hv(better_sol, nadir_point)
-      Ideal_hv <- get_ideal_hv(biobj_info, func_id, iii)
+      # Compute hypervolume
+      nadir <- get_nadir(biobj_info, fid, iid)
+      ideal_hv <- get_ideal_hv(biobj_info, fid, iid)
+      non_dominated <- unique(solutions[, solutions[1, ] <= nadir[1] & solutions[2, ] <= nadir[2]])
+      hv <- compute_hv(non_dominated, nadir)
+      normalized_hv <- hv / ideal_hv
       
-      normalized_hv <- hv / Ideal_hv
-      hv_data <- c(instance = instance_name, seed = roop_seed, roop = roop, normalized_hv = normalized_hv)
+      # Save HV result
+      hv_entry <- c(instance = fn_name, seed = seed, rep = rep_id, normalized_hv = normalized_hv)
+      all_hv_data <- rbind(all_hv_data, hv_entry)
       
-      # Append HV data directly to the matrix
-      all_hv_data <- rbind(all_hv_data, hv_data)
-      
-      name_list <- cbind(
-        matrix(c(instance_name, instance_name), nrow = 2, ncol = 1),
-        matrix(c("y1", "y2"), nrow = 2, ncol = 1),
-        matrix(c(roop_seed, roop_seed), nrow = 2, ncol = 1),
-        matrix(c(roop, roop), nrow = 2, ncol = 1),
-        sms_solution
-      )
-      
-      # Append the solution data to Archive_Data
-      Archive_Data <- rbind(Archive_Data, name_list)
-      
-      print(paste("instance name ", instance_name, "roop: ", roop))
-      print(paste("process time: ", time_sms["elapsed"], "sec"))
+      # Print progress
+      cat(sprintf("Instance: %s | Repetition: %d | Normalized_HV: %f | Elapsed time: %.2f sec\n", fn_name, rep_id, normalized_hv, time_sms["elapsed"]))
     }
-    
-    # Write HV data and solution data to file
-    file_name_hv <- paste0("sms_hv_instance", iii, ".csv")
-    write.table(all_hv_data, file = file_name_hv, col.names = FALSE, row.names = FALSE, append = TRUE, sep = ",")
-    
-    
-    
-    file_name <- paste0("sms_archive_instance", iii, ".csv")
-    write.table(t(Archive_Data), file = file_name, col.names = FALSE, row.names = FALSE, append = TRUE, sep = ",")
-    
   }
-  
 }
