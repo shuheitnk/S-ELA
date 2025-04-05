@@ -2,6 +2,7 @@ source("SMS-EMOA.R")
 source("compute_hv.R")
 biobj_info <- read.csv("bbob_biobj_ideal_nadir.csv", fileEncoding = "UTF-8")
 
+
 # Define common options
 common_option = list(
   optparse::make_option("--n.dim", type = "numeric", default = 2, help = "The dimensionality"),
@@ -63,7 +64,7 @@ for (iid in 1:5) {
         moleopt::runif_box(fn_lower, fn_upper)
       }))
       
-      # Run MOLE optimization
+      # Run SMS-EMOA optimization
       time_sms <- system.time({
         solutions <- get_sms_fitness(
           seed = seed,
