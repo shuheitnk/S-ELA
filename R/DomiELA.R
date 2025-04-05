@@ -1,7 +1,7 @@
 
 
 # Function for NDS (non-dominated sorting)-based approach
-DomiELA = function(X, Y, set_name) {
+DomiELA = function(X, Y, normalize_X = TRUE, normalize_R = TRUE, set_name) {
 
   # Check if required packages are installed
   if (!requireNamespace("flacco", quietly = TRUE)) {
@@ -24,15 +24,26 @@ DomiELA = function(X, Y, set_name) {
     ranks <- ecr::doNondominatedSorting(t(Y))$ranks
     R <- as.numeric(ranks)
 
+    if (normalize_X == TRUE){
+      X <- NormalizeColumns(X)
+    }
+
+    if (normalize_R == TRUE){
+      R <- NormalizeColumns(matrix(R, ncol = 1))
+    }
+
     # Create feature object for the non-dominated solutions
     feat_object <- flacco::createFeatureObject(X = X, y = R)
 
     # Calculate the dominance-based feature set
-    if (set_name != "ela_distr") {
-      domi <- flacco::calculateFeatureSet(feat_object, set = set_name)
-    }else{
+    if (set_name == "ela_distr") {
       domi <- domiDistr(Y)
+    }else if (set_name == "fdc") {
+      domi <- computefdc(X = X, Y = R)
+    }else{
+      domi <- flacco::calculateFeatureSet(feat_object, set = set_name)
     }
+
 
 
     # Process feature set into a list with modified names

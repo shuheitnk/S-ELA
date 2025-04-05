@@ -1,5 +1,5 @@
 # Function for decomposition-based approach
-DecoELA = function(X, Y, H, aggregate = TRUE, scalar_func = "weightedsum", set_name) {
+DecoELA = function(X, Y, normalize_X = TRUE, normalize_Y = TRUE, normalize_G = TRUE, H, aggregate = TRUE, scalar_func = "weightedsum", set_name) {
 
   # Check if required packages are installed
   if (!requireNamespace("flacco", quietly = TRUE)) {
@@ -27,12 +27,18 @@ DecoELA = function(X, Y, H, aggregate = TRUE, scalar_func = "weightedsum", set_n
     stop("Error: The number of solutions (", n.solutions, ") and fitness values (", n.fitness, ") must be equal.")
   } else {
 
+    if (normalize_Y == TRUE){
+      Y <- NormalizeColumns(Y)
+    }
+
     # Generate the weight vector for decomposition
     weight_vector <- MOEADr::decomposition_sld(list(name = "sld", H = H, .nobj = ncol(Y)))
     n.weight <- nrow(weight_vector)
 
     # Initialize the result list for features
     sub_features <- vector("list", n.weight)
+
+
 
     # Loop over each weight vector to calculate the new objective values and feature sets
     for (i in 1:n.weight) {
@@ -41,11 +47,24 @@ DecoELA = function(X, Y, H, aggregate = TRUE, scalar_func = "weightedsum", set_n
       # Compute the scalarized objective values based on the weight vector
       G <- Scfunc(Y, w)
 
+      if (normalize_X == TRUE){
+        X <- NormalizeColumns(X)
+      }
+
+      if (normalize_G == TRUE){
+        G <- NormalizeColumns(matrix(G, ncol = 1))
+      }
+
       # Create feature object for the current set of solutions
       feat_object <- flacco::createFeatureObject(X = X, y = G)
 
       # Calculate the feature set for the current weight vector
-      sub_features[[i]] <- flacco::calculateFeatureSet(feat_object, set = set_name)
+      if (set_name == "fdc"){
+        sub_features[[i]]<- computefdc(X = X, Y = G)
+      }else{
+        sub_features[[i]] <- flacco::calculateFeatureSet(feat_object, set = set_name)
+      }
+
     }
 
     # Aggregate the feature sets if required
