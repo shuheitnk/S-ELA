@@ -257,141 +257,32 @@ makeECRResult = function(control, log, population, fitness, stop.object, ...) {
   return(moo.res)
 }
 
-transformFitness = function(fitness, task, selector) {
-  # logical vector of opt directions
+transformFitness = function (fitness, task, selector) 
+{
   task.dir = task$minimize
-  # "vectorize" character indicating supported opt direction by selector
-  sup.dir = rep(attr(selector, "supported.opt.direction"), task$n.objectives)
-  # "logicalize" selector opt direction
+  sup.dir = rep(attr(selector, "supported.opt.direction"), 
+                task$n.objectives)
   sup.dir = (sup.dir == "minimize")
-  
   fn.scale = ifelse(xor(task.dir, sup.dir), -1, 1)
-  
-  # build transformation matrix
   fn.scale = if (task$n.objectives == 1L) {
-    #FIXME: R BUG?!?!
-    # diag(ifelse(xor(task.dir, sup.dir), -1, 1)) breaks with message
-    # Fehler in diag(ifelse(xor(task.dir, sup.dir), -1, 1)) : ung"ultiger 'nrow' Wert (< 0)
-    # if n.objectives is 1! -.-
-    # Weird R bug??? diag(1) works!
     as.matrix(fn.scale)
-  } else {
+  }
+  else {
     diag(fn.scale)
   }
-  
-  # transform fitness
   return(fn.scale %*% fitness)
 }
 
 
-setupResult.ecr_multi_objective = function(population, fitness, control, log, stop.object) {
-  fitness = transformFitness(fitness, control$task, control$selectForMating)
-  
-  makeS3Obj(
-    task = control$task,
-    log = log,
-    last.population = population,
-    message = stop.object$message,
-    classes = c("ecr_multi_objective_result", "ecr_result")
-  )
-}
-
-selDomHV = makeSelector(
-  selector = function(fitness, n.select, ref.point) {
-    checkmate::assertMatrix(fitness, mode = "numeric", min.rows = 2L, min.cols = 2L, any.missing = FALSE, all.missing = FALSE)
-    checkmate::assertNumeric(ref.point, any.missing = FALSE, all.missing = FALSE)
-    
-    n = ncol(fitness)
-    
-    if (n.select != (n - 1)) {
-      BBmisc::stopf("[ecr::selDomHV] Note that selDomHV always drops a single individual
-        and hence (ncol(fitness) - 1) individuals are selected. Your choice of
-        n.select (= %i) is not allowed since (ncol(fitness) - 1) equals %i. Check your setup!", n.select, (n - 1L))
-    }
-    
-    all.idx = seq_len(n)
-    
-    
-    # Calculate the reference point for each objective function
-    ref.point <- apply(fitness, 1, function(f) {
-      max(f) + 0.1 * abs(max(f) - min(f))
-    })
-      
-    
-    
-    # do non-dominated sorting
-    ranks = doNondominatedSorting(fitness)$ranks
-    
-    idx.max = which(ranks == max(ranks))
-    
-    # there is exactly one individual that is "maximally" dominated
-    if (length(idx.max) == 1L) {
-      
-      return(setdiff(all.idx, idx.max))
-    }
-    
-    # compute exclusive hypervolume contributions and remove the one with the smallest
-    hvctrbs = computeHVContr(fitness[, idx.max, drop = FALSE], ref.point = ref.point)
-    die.idx = idx.max[getMinIndex(hvctrbs)]
-    
-    
-    return(setdiff(all.idx, die.idx))
-    
-  },
-  supported.objectives = "multi-objective")
-
-
-
-setup = function(operator, ...) {
-  assertClass(operator, "ecr_operator")
-  args = list(...)
-  attrs = attributes(operator)
-  fn = function(x, ...) {
-    do.call(operator, c(list(x), BBmisc::insert(args, list(...))))
-  }
-  attributes(fn) = attrs
-  return(fn)
-}
-
-getDefaultEvolutionaryOperators = function(representation, type, n.objectives, control) {
-  if (n.objectives == 1L) {
-    return(getSingleObjectiveDefaults(representation, type, control))
-  }
-  return(getMultiObjectiveDefaults(representation, type, control))
-}
-
-getMultiObjectiveDefaults = function(representation, type, control) {
-  defaults = list(
-    "float" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = try(setup(mutGauss), silent = TRUE),
-      "recombinator" = setup(recIntermediate),
-      "survival.selector" = setup(selNondom)
-    ),
-    "binary" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = setup(mutBitflip),
-      "recombinator" = setup(recCrossover),
-      "survival.selector" = setup(selNondom)
-    ),
-    "permutation" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = setup(mutSwap),
-      "recombinator" = setup(recPMX),
-      "survival.selector" = setup(selNondom)
-    ),
-    "custom" = list(
-      "parent.selector" = setup(selSimple),
-      "mutator" = NULL,
-      "recombinator" = NULL,
-      "survival.selector" = setup(selNondom)
-    )
-  )
-  
-  if (representation %in% names(defaults)) {
-    return(defaults[[representation]][[type]])
-  }
-  stopf("No defaults availiable for custom representation. You need to specify all
-    operators by hand.")
+setupResult.ecr_multi_objective = function (population, fitness, control, log, stop.object) 
+{
+  fitness = ecr:::transformFitness(fitness, control$task, control$selectForMating)
+  pareto.idx = which.nondominated(fitness)
+  pareto.front = as.data.frame(t(fitness[, pareto.idx, drop = FALSE]))
+  colnames(pareto.front) = control$task$objective.names
+  makeS3Obj(task = control$task, log = log, pareto.idx = pareto.idx, 
+            pareto.front = pareto.front, pareto.set = population[pareto.idx], 
+            last.population = population, message = stop.object$message, 
+            classes = c("ecr_multi_objective_result", "ecr_result"))
 }
 
