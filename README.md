@@ -61,7 +61,7 @@ deco_features = DecoELA(X,                            # Sampled solutions (matri
                         normalize_G = TRUE,           # Whether to normalize objevtive value of sub-problems
                         H = 5,                        # Decomposition parameter H
                         aggregate = TRUE,             # Whether to aggregate sub-problem features
-                        scalar_func = "weightedsum",  # Scalarization function
+                        scalar_func = "weightedsum",  # Scalarization function (Weighted Sum or Tchebycheff)
                         set_name = "ela_distr"        # Feature set name (ela_meta, ela_distr, disp, nbc, ic, pca, fdc)
                         )
 
