@@ -88,7 +88,7 @@ time_all <- system.time({
             results_disp[[i]] <- flacco::calculateFeatureSet(feat_object, set = "disp")
             results_nbc[[i]] <- flacco::calculateFeatureSet(feat_object, set = "nbc")
             results_ic[[i]] <- flacco::calculateFeatureSet(feat_object, set = "ic")
-            results_fdc[[i]] <- FitnessDistanceFeatures(X = X, Y = Fn)
+            results_fdc[[i]] <- flacco:::calculateFitnessDistanceFeatures (feat_object)
             results_pca[[i]] <- flacco::calculateFeatureSet(feat_object, set = "pca")
             
             
