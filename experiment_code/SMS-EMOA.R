@@ -1,3 +1,8 @@
+# The functions used in this script are modified versions of those from the 'ecr' package,
+# with most being based on functions from the 'ecr' package (https://github.com/jakobbossek/ecr2.git).
+# For more information about the 'ecr' package, please visit the official repository.
+
+
 get_sms_fitness = function(
     seed = NULL,
     fitness.fun, 
