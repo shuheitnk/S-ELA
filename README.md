@@ -54,10 +54,24 @@ X <- sweep(samples, 2, fn.lower, "+") * (fn.upper - fn.lower)
 Y <- t(apply(X, 1, fn))
 
 # Compute decomposition-based S-ELA features (ela_distr)
-deco_features = DecoELA(X, Y, normalize_X = TRUE, normalize_Y = TRUE, normalize_G = TRUE, H = 5, aggregate = TRUE, scalar_func = "weightedsum", set_name = "ela_distr")
+deco_features = DecoELA(X,                            # Sampled solutions (matrix)
+                        Y,                            # Objective values (matrix)
+                        normalize_X = TRUE,           # Whether to normalize sampled solutions
+                        normalize_Y = TRUE,           # Whether to normalize objective vectors before decomposition
+                        normalize_G = TRUE,           # Whether to normalize objevtive value of sub-problems
+                        H = 5,                        # Decomposition parameter H
+                        aggregate = TRUE,             # Whether to aggregate sub-problem features
+                        scalar_func = "weightedsum",  # Scalarization function
+                        set_name = "ela_distr"        # Feature set name (ela_meta, ela_distr, disp, nbc, ic, pca, fdc)
+                        )
 
 # Compute NDS-based S-ELA features (ela_meta)
-domi_features = DomiELA(X, Y, normalize_X = TRUE, normalize_R = TRUE, set_name = "ela_meta")
+domi_features = DomiELA(X,
+                        Y,
+                        normalize_X = TRUE,
+                        normalize_R = TRUE,           # Whether to normalize rank values
+                        set_name = "ela_meta"
+                        )
 ```
 
 # Citation
