@@ -234,3 +234,31 @@ makeECRResult = function (control, log, population, fitness, stop.object, ...)
   moo.res = filterDuplicated(moo.res)
   return(moo.res)
 }
+
+setupResult.ecr_multi_objective = function (population, fitness, control, log, stop.object) 
+{
+  fitness = ecr:::transformFitness(fitness, control$task, control$selectForMating)
+  pareto.idx = which.nondominated(fitness)
+  pareto.front = as.data.frame(t(fitness[, pareto.idx, drop = FALSE]))
+  colnames(pareto.front) = control$task$objective.names
+  makeS3Obj(task = control$task, log = log, pareto.idx = pareto.idx, 
+            pareto.front = pareto.front, pareto.set = population[pareto.idx], 
+            last.population = population, message = stop.object$message, 
+            classes = c("ecr_multi_objective_result", "ecr_result"))
+}
+
+transformFitness = function (fitness, task, selector) 
+{
+  task.dir = task$minimize
+  sup.dir = rep(attr(selector, "supported.opt.direction"), 
+                task$n.objectives)
+  sup.dir = (sup.dir == "minimize")
+  fn.scale = ifelse(xor(task.dir, sup.dir), -1, 1)
+  fn.scale = if (task$n.objectives == 1L) {
+    as.matrix(fn.scale)
+  }
+  else {
+    diag(fn.scale)
+  }
+  return(fn.scale %*% fitness)
+}
