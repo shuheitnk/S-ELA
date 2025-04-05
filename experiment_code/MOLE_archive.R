@@ -41,7 +41,7 @@ set.seed(common_opt$common_seed)
 random_seeds <- sample(1:100, common_opt$n.repeat, replace = FALSE)
 
 # Loop over problem instances (iid)
-for (iid in 1:5) {
+for (iid in 1:10) {
   repetition_id <- 0
   
   for (seed in random_seeds) {
