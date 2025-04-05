@@ -1,3 +1,8 @@
+# The functions used in this script are modified versions of those from the 'ecr' package,
+# with most being based on functions from the 'ecr' package (https://github.com/jakobbossek/ecr2.git).
+# For more information about the 'ecr' package, please visit the official repository.
+
+
 get_nsga_fitness = function(
     seed = NULL,
     fitness.fun, 
@@ -199,66 +204,9 @@ ecr_nsga2 = function(
     updateLogger(log, offspring, fitness.offspring, n.evals = lambda)
     
     
-    stop.object = doTerminate(log, terminators)
+    stop.object = ecr:::doTerminate(log, terminators)
     if (length(stop.object) > 0L)
       break
   }
-  return(makeECRResult(control, log, population, fitness, stop.object))
-}
-
-doTerminate = function (log, stop.conds) 
-{
-  stop.object = list()
-  if (!length(stop.conds)) {
-    return(stop.object)
-  }
-  for (stop.conds in stop.conds) {
-    shouldStop = stop.conds(log = log)
-    if (shouldStop) {
-      stop.object$name = attr(stop.conds, "name")
-      stop.object$message = attr(stop.conds, "message")
-      break
-    }
-  }
-  return(stop.object)
-}
-
-makeECRResult = function (control, log, population, fitness, stop.object, ...) 
-{
-  n.objectives = control$task$n.objectives
-  if (n.objectives == 1L) 
-    return(setupResult.ecr_single_objective(population, fitness, 
-                                            control, log, stop.object, ...))
-  moo.res = setupResult.ecr_multi_objective(population, fitness, 
-                                            control, log, stop.object, ...)
-  moo.res = filterDuplicated(moo.res)
-  return(moo.res)
-}
-
-transformFitness = function (fitness, task, selector) 
-{
-  task.dir = task$minimize
-  sup.dir = rep(attr(selector, "supported.opt.direction"), 
-                task$n.objectives)
-  sup.dir = (sup.dir == "minimize")
-  fn.scale = ifelse(xor(task.dir, sup.dir), -1, 1)
-  fn.scale = if (task$n.objectives == 1L) {
-    as.matrix(fn.scale)
-  }
-  else {
-    diag(fn.scale)
-  }
-  return(fn.scale %*% fitness)
-}
-
-setupResult.ecr_multi_objective = function (population, fitness, control, log, stop.object) 
-{
-  fitness = transformFitness(fitness, control$task, control$selectForMating)
-  pareto.idx = which.nondominated(fitness)
-  pareto.front = as.data.frame(t(fitness[, pareto.idx, drop = FALSE]))
-  colnames(pareto.front) = control$task$objective.names
-  makeS3Obj(task = control$task, log = log, pareto.idx = pareto.idx, 
-            pareto.front = pareto.front, pareto.set = population[pareto.idx], 
-            last.population = population, message = stop.object$message, 
-            classes = c("ecr_multi_objective_result", "ecr_result"))
+  return(ecr:::makeECRResult(control, log, population, fitness, stop.object))
 }
