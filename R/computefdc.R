@@ -16,5 +16,5 @@ computefdc <- function(X, Y) {
     fdc = cor(Y, distances, method = "pearson")
 
     list(fdc = fdc)
-  }), "fitness_distance")
+  }), "fdc")
 }
