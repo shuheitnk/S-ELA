@@ -1,5 +1,5 @@
 # Load required custom functions
-source("Supportingfunction.R")  #Several functions supporting calculation of S-ELA
+source("Supportingfunctions.R")  #Several functions supporting calculation of S-ELA
 source("makeobject.R")            # Function for generating input samples and objective values
 
 # Set up experimental parameters
