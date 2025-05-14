@@ -48,7 +48,7 @@ total_time <- system.time({
           rank1_ratio <- sum(nds_ranks == 1) / num_samples
           
           # Generate weight vectors using MOEA/D decomposition
-          weights <- MOEADr::decomposition_sld(list(name = "sld", H = 5, .nobj = 2))[, 1]
+          weights <- MOEADr::decomposition_sld(list(name = "sld", H = 50, .nobj = 2))[, 1]
           num_weights <- length(weights)
           
           # Initialize feature object for NDS-based approach
