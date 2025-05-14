@@ -5,8 +5,8 @@ source("makeobject.R")            # Function for generating input samples and ob
 # Set up experimental parameters
 dimension <- 2
 set.seed(100)
-unique_seeds <- sample(1:1000, 1, replace = FALSE)  # Random seed for reproducibility
-instance_ids <- 1:31  # BBOB instance IDs to evaluate
+unique_seeds <- sample(1:1000, 31, replace = FALSE)  # Random seed for reproducibility
+instance_ids <- 1:10  # BBOB instance IDs to evaluate
 
 write_count <- 0  # Counter to track file writing
 
