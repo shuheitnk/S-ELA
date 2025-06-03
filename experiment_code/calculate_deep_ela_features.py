@@ -2,10 +2,10 @@ import pandas as pd
 from pflacco.deep_ela import load_medium_25d_v1, load_medium_50d_v1, load_large_25d_v1, load_large_50d_v1
 
 # Load datasets
-decision_data = pd.read_csv('C:/decision_200.csv')
+decision_data = pd.read_csv("decision_200.csv")
 
 # please make fitness_200.csv from decision_200.csv in R-function in advance
-fitness_data = pd.read_csv('C:/fitness_200.csv')
+fitness_data = pd.read_csv("fitness_200.csv")
 
 # Load Deep ELA models
 medium_25d = load_medium_25d_v1() 
@@ -33,7 +33,7 @@ for instance in instance_set:
         
         # Filter data based on the current instance and roop
         filtered_decision_data = decision_data[decision_data["roop"] == roop].iloc[:, 1:]
-        filtered_fitness_data = fitness_data[(fitness_data["instance"] == instance) & (fitness_data["roop"] == roop)].iloc[:, 1:]
+        filtered_fitness_data = fitness_data[(fitness_data["instance"] == instance) & (fitness_data["roop"] == roop)].iloc[:, 4:]
         
         # Convert filtered data to numpy arrays
         X = filtered_decision_data.to_numpy().T
