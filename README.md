@@ -80,11 +80,11 @@ This package implements S-ELA which is proposed in the upcoming paper accepted a
 If you are using S-ELA, please use the following BibTeX:
 
 ```r
-@inproceedings{,
+@inproceedings{tanaka2025scalarization,
   title={Scalarization-based Exploratory Landscape Analysis for Multi-Objective Continuous Optimization Problems},
-  author={Shuhei, Tanaka and Shoichiro, Tanaka and Toshiharu, Hatanaka},
+  author={Tanaka, Shuhei and Tanaka, Shoichiro and Hatanaka, Toshiharu},
   booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
-  pages={--},
+  pages={654--662},
   year={2025}
 }
 ```
